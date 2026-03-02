@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hellogroup.teamenu.infrastructure.persistence.mapper.RecipeMapper">
+    
+    <!-- 搜索食谱 -->
+    <select id="searchRecipes" resultType="com.hellogroup.teamenu.infrastructure.persistence.entity.RecipeEntity">
+        SELECT DISTINCT r.*
+        FROM recipe r
+        LEFT JOIN recipe_ingredient ri ON r.id = ri.recipe_id
+        WHERE r.deleted = 0
+        AND (
+            r.name LIKE CONCAT('%', #{keyword}, '%')
+            OR ri.name LIKE CONCAT('%', #{keyword}, '%')
+        )
+        ORDER BY r.last_access_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+</mapper>
