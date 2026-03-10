@@ -39,6 +39,7 @@ logs/
 
 # Application
 uploads/
+test-uploads/
 /data/
 
 # Environment

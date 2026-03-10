@@ -120,8 +120,41 @@
         </root>
     </springProfile>
     
+    <!-- 测试环境配置 -->
+    <springProfile name="test">
+        <!-- 项目包日志级别 -->
+        <logger name="com.hellogroup.teamenu" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        
+        <!-- MyBatis Plus SQL日志 -->
+        <logger name="com.baomidou.mybatisplus" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        
+        <!-- Mapper 日志 -->
+        <logger name="com.hellogroup.teamenu.infrastructure.persistence.mapper" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        
+        <!-- Spring框架日志 -->
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        
+        <!-- Spring Test日志 -->
+        <logger name="org.springframework.test" level="INFO" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        
+        <!-- 根日志级别 - 只输出到控制台 -->
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+    
     <!-- 默认配置（无profile或其他profile时使用） -->
-    <springProfile name="!dev &amp; !prod">
+    <springProfile name="!dev &amp; !prod &amp; !test">
         <logger name="com.hellogroup.teamenu" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="ASYNC_FILE"/>

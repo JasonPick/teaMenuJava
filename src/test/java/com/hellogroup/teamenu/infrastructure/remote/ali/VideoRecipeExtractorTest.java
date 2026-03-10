@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @Profile("test")
+@DisplayName("视频食谱提取器测试")
 class VideoRecipeExtractorTest {
 
     @Resource
