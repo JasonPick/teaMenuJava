@@ -150,6 +150,18 @@
             <version>${langchain4j-beta.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-milvus</artifactId>
+            <version>${langchain4j-beta.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-easy-rag</artifactId>
+            <version>${langchain4j-beta.version}</version>
+        </dependency>
+
         <!-- Actuator 健康检查 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
