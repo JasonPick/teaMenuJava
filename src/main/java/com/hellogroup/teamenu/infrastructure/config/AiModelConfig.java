@@ -26,5 +26,6 @@ public class AiModelConfig {
                 .logRequests(true)
                 .logResponses(true)
                 .build();
+        
     }
 }
