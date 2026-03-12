@@ -13,27 +13,27 @@ public enum IngredientCategory {
     /**
      * 蔬菜水果
      */
-    VEGETABLES_FRUITS("蔬菜水果", "vegetables_fruits"),
+    VEGETABLES_FRUITS("蔬菜水果", "VEGETABLE"),
     
     /**
      * 肉禽蛋
      */
-    MEAT_POULTRY_EGGS("肉禽蛋", "meat_poultry_eggs"),
+    MEAT_POULTRY_EGGS("肉禽蛋", "MEAT"),
     
     /**
      * 熟食
      */
-    COOKED_FOOD("熟食", "cooked_food"),
+    COOKED_FOOD("熟食", "COOKED"),
     
     /**
      * 零食
      */
-    SNACKS("零食", "snacks"),
+    SNACKS("零食", "SNACKS"),
     
     /**
      * 酱料
      */
-    CONDIMENTS("酱料", "condiments");
+    SEASONING("酱料", "SEASONING");
     
     private final String displayName;
     private final String code;
