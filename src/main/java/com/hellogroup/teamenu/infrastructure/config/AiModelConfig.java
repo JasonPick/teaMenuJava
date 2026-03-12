@@ -28,4 +28,15 @@ public class AiModelConfig {
                 .build();
         
     }
+
+    @Bean
+    public OpenAiChatModel openAiChatModel() {
+        return OpenAiChatModel.builder()
+                              .baseUrl("http://langchain4j.dev/demo/openai/v1")
+                              .apiKey("demo")
+                              .logRequests(true)
+                              .logResponses(true)
+                              .modelName("gpt-4o-mini")
+                              .build();
+    }
 }

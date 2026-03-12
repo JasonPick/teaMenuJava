@@ -16,6 +16,7 @@ public class ContentRetrieverConfig {
     @Bean
     public ContentRetriever miluvsContentRetriever(MilvusEmbeddingStore milvusEmbeddingStore){
         return EmbeddingStoreContentRetriever.builder()
+                                             .minScore(0.8D)
                                              .embeddingModel(new BgeSmallEnV15QuantizedEmbeddingModel())
                                              .embeddingStore(milvusEmbeddingStore).build();
     }
