@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import com.hellogroup.teamenu.domain.model.RecipeCategory;
 import dev.langchain4j.agentic.Agent;
 import dev.langchain4j.agentic.AgenticServices;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.rag.content.Content;
 import dev.langchain4j.rag.content.ContentMetadata;
@@ -12,7 +14,9 @@ import dev.langchain4j.rag.query.Query;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
+import dev.langchain4j.store.embedding.IngestionResult;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Component;
@@ -117,15 +121,23 @@ public class IngredientService {
             Content content = retrieve.get(retrieve.size() - 1);
 
             //TODO
-            String category = content.textSegment().metadata().getString("");
+            String category = content.textSegment().metadata().getString("category");
             result.put(ingredient, category);
         }
 
         String ingredient = String.join("、", notFoundIngredientList);
         String classification = Arrays.stream(RecipeCategory.values()).map(RecipeCategory::getDisplayName).collect(Collectors.joining("、"));
         Map<String, String> aiResult = assistant.ingredientUnderstanding(ingredient, classification);
-        result.putAll(aiResult);
+        if(MapUtils.isEmpty(aiResult)){
+            return result;
+        }
 
+        List<Document> documentList = aiResult.entrySet()
+                                              .stream()
+                                              .map(o -> Document.from(o.getKey(), Metadata.from("category", o.getValue())))
+                                              .toList();
+        miluvsEmbeddingStoreIngestor.ingest(documentList);
+        result.putAll(aiResult);
         return result;
     }
 }
