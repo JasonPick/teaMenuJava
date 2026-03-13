@@ -48,22 +48,29 @@ public class ImageRecipeExtractor {
     private ObjectMapper objectMapper;
 
     /**
-     * 一次性从文本中提取食材、步骤、分类和预估时间
+     * 从图片列表中提取食材、步骤、分类和预估时间
      */
-    public LlmRecipeExtractor.ExtractResult extract(String videoUrl) {
+    public LlmRecipeExtractor.ExtractResult extract(List<String> imageUrls) {
         if (!aliAiService.isAvailable()) {
             log.warn("ALI AI不可用，无法使用 LLM 提取食谱信息");
             return null;
         }
 
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            log.warn("图片URL列表为空，无法提取食谱信息");
+            return null;
+        }
+
         try {
-            String response = aliAiService.imageUnderstanding(SYSTEM_PROMPT, videoUrl);
+            log.info("开始从{}张图片中提取食谱信息", imageUrls.size());
+            String response = aliAiService.imageUnderstanding(SYSTEM_PROMPT, imageUrls);
             if (response == null || response.isBlank()) {
+                log.warn("图片理解返回空结果");
                 return null;
             }
             return parseResponse(response);
         } catch (Exception e) {
-            log.error("LLM 提取食谱信息失败", e);
+            log.error("图片理解提取食谱信息失败", e);
             return null;
         }
     }

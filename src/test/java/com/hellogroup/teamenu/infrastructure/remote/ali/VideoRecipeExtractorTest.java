@@ -1,11 +1,13 @@
 package com.hellogroup.teamenu.infrastructure.remote.ali;
 
 import com.google.common.collect.Lists;
+import com.hellogroup.teamenu.application.service.RecipeApiService;
 import com.hellogroup.teamenu.domain.service.IngredientService;
 import com.hellogroup.teamenu.infrastructure.remote.zhipu.LlmRecipeExtractor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -40,6 +42,8 @@ class VideoRecipeExtractorTest {
 
     @Resource
     private IngredientService ingredientService;
+    @Autowired
+    private RecipeApiService recipeApiService;
 
     @Test
     @DisplayName("成功提取视频食谱信息 - 完整数据")
@@ -78,6 +82,13 @@ class VideoRecipeExtractorTest {
     @DisplayName("食材分类")
     void ingredient_category() {
         ingredientService.ingredientClassification(Lists.newArrayList("西葫芦", "沙茶酱", "红薯", "豌豆", "豆角", "辣椒粉", "葱姜蒜"));
+    }
+
+    @Test
+    void import_xiaohongshu(){
+        String url = "酸辣番茄鸡！汤汁浓郁鲜嫩入味！真的巨好吃 想告诉全... http://xhslink.com/o/6lkxbalP5bY\n" +
+                "复制后打开【小红书】查看笔记！";
+        recipeApiService.importFromXiaohongshu(url);
     }
 
 
