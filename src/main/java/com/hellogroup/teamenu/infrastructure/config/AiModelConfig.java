@@ -17,6 +17,9 @@ public class AiModelConfig {
     @Value("${ali.ai.video.model:qwen3.5-plus}")
     public String aliAiVideoModel;
 
+    @Value("${openai.api.key:}")
+    public String openAiApiKey;
+
     @Bean
     public OpenAiChatModel aliAiVideoModel() {
         return OpenAiChatModel.builder()

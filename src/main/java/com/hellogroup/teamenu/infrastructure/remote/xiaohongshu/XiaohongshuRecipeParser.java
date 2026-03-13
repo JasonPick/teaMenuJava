@@ -33,13 +33,13 @@ public class XiaohongshuRecipeParser {
     /**
      * 解析小红书笔记为食谱
      *
-     * @param feedDetail 笔记详情JSON
+     * @param feedDetail 笔记详情JSON（新 API 格式，根节点即包含所有数据）
      * @return 食谱对象
      */
     public Recipe parse(JsonNode feedDetail) {
         try {
             Recipe.RecipeBuilder builder = Recipe.builder();
-            feedDetail = feedDetail.path("data").path("note");
+            // 新 API 格式不需要提取 data.note，根节点即包含数据
 
             String title = extractTitle(feedDetail);
             builder.name(title);
@@ -99,20 +99,25 @@ public class XiaohongshuRecipeParser {
 
     /**
      * 提取标题
+     * 新 API 格式: text.title 或 text.desc 第一行
      */
     private String extractTitle(JsonNode feedDetail) {
-        JsonNode titleNode = feedDetail.path("title");
-        if (!titleNode.isMissingNode()) {
-            return titleNode.asText();
-        }
-
-        JsonNode descNode = feedDetail.path("desc");
-        if (!descNode.isMissingNode()) {
-            String desc = descNode.asText();
-            // 取第一行作为标题
-            String[] lines = desc.split("\n");
-            if (lines.length > 0) {
-                return lines[0].trim();
+        // 先尝试 text.title
+        JsonNode textNode = feedDetail.path("text");
+        if (!textNode.isMissingNode()) {
+            JsonNode titleNode = textNode.path("title");
+            if (!titleNode.isMissingNode() && !titleNode.asText().isEmpty()) {
+                return titleNode.asText();
+            }
+            
+            // 如果 title 为空，取 desc 的第一行
+            JsonNode descNode = textNode.path("desc");
+            if (!descNode.isMissingNode()) {
+                String desc = descNode.asText();
+                String[] lines = desc.split("\n");
+                if (lines.length > 0 && !lines[0].trim().isEmpty()) {
+                    return lines[0].trim();
+                }
             }
         }
 
@@ -121,14 +126,17 @@ public class XiaohongshuRecipeParser {
 
     /**
      * 提取图片
+     * 新 API 格式: images 数组，每项包含 url, width, height, live_photo 等字段
      */
     private List<String> extractImages(JsonNode feedDetail) {
         List<String> images = new ArrayList<>();
 
-        JsonNode imagesNode = feedDetail.path("imageList");
+        // 新 API 格式: images 数组
+        JsonNode imagesNode = feedDetail.path("images");
         if (imagesNode.isArray()) {
             for (JsonNode imageNode : imagesNode) {
-                String url = imageNode.path("urlDefault").asText();
+                // 新格式字段是 "url" 而不是 "urlDefault"
+                String url = imageNode.path("url").asText();
                 if (url != null && !url.isEmpty()) {
                     // 将HTTP转换为HTTPS以支持iOS的ATS
                     if (url.startsWith("http://")) {
@@ -144,16 +152,22 @@ public class XiaohongshuRecipeParser {
 
     /**
      * 提取内容
+     * 新 API 格式: text.title 和 text.desc
      */
     private String extractContent(JsonNode feedDetail) {
-        JsonNode descNode = feedDetail.path("desc");
-        if (!descNode.isMissingNode()) {
-            return descNode.asText();
-        }
-
-        JsonNode contentNode = feedDetail.path("content");
-        if (!contentNode.isMissingNode()) {
-            return contentNode.asText();
+        JsonNode textNode = feedDetail.path("text");
+        if (!textNode.isMissingNode()) {
+            String title = textNode.path("title").asText("");
+            String desc = textNode.path("desc").asText("");
+            
+            // 组合 title 和 desc
+            if (!title.isEmpty() && !desc.isEmpty()) {
+                return title + "\n\n" + desc;
+            } else if (!desc.isEmpty()) {
+                return desc;
+            } else if (!title.isEmpty()) {
+                return title;
+            }
         }
 
         return "";
@@ -304,14 +318,10 @@ public class XiaohongshuRecipeParser {
 
     /**
      * 提取作者名称
+     * 新 API 格式: user.nickname
      */
     private String extractAuthorName(JsonNode feedDetail) {
-        JsonNode authorNode = feedDetail.path("author").path("nickname");
-        if (!authorNode.isMissingNode()) {
-            return authorNode.asText();
-        }
-
-        JsonNode userNode = feedDetail.path("user").path("name");
+        JsonNode userNode = feedDetail.path("user").path("nickname");
         if (!userNode.isMissingNode()) {
             return userNode.asText();
         }

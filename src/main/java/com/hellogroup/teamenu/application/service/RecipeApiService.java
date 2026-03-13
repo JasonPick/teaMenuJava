@@ -44,6 +44,9 @@ public class RecipeApiService {
 
     @Resource
     private XiaohongshuRecipeParser xiaohongshuRecipeParser;
+    
+    @Resource
+    private com.hellogroup.teamenu.infrastructure.remote.xiaohongshu.XiaohongshuRemoteService xiaohongshuRemoteService;
 
     @Resource
     private XiachufangRemoteService xiachufangRemoteService;
@@ -206,6 +209,7 @@ public class RecipeApiService {
 
     /**
      * 从小红书导入食谱
+     * 优先使用新的 HTTP API (xiaohongshu-api)，失败后 fallback 到 MCP
      */
     private RecipeDTO importFromXiaohongshu(String text) {
         String resolvedUrl = resolveXiaohongshuUrl(text);
@@ -221,7 +225,24 @@ public class RecipeApiService {
         String xsecToken = extractXsecToken(resolvedUrl);
         log.info("提取小红书参数, feedId={}, xsecToken={}", feedId, xsecToken);
 
-        JsonNode feedDetail = xiaohongshuMcpClient.getFeedDetail(feedId, xsecToken);
+        JsonNode feedDetail = null;
+        
+        // 优先使用新的 HTTP API
+        try {
+            feedDetail = xiaohongshuRemoteService.getFeedDetail(feedId, xsecToken);
+            log.info("使用 xiaohongshu-api 服务获取笔记详情成功");
+        } catch (Exception e) {
+            log.warn("xiaohongshu-api 服务调用失败，尝试 fallback 到 MCP: {}", e.getMessage());
+            // Fallback 到 MCP 方式
+            try {
+                feedDetail = xiaohongshuMcpClient.getFeedDetail(feedId, xsecToken);
+                log.info("使用 MCP 方式获取笔记详情成功");
+            } catch (Exception mcpError) {
+                log.error("MCP 方式也失败", mcpError);
+                throw new BusinessException(ResponseCode.EXTERNAL_SERVICE_ERROR, 
+                    "获取小红书笔记失败，API 和 MCP 方式均不可用");
+            }
+        }
 
         Recipe recipe = xiaohongshuRecipeParser.parse(feedDetail);
 

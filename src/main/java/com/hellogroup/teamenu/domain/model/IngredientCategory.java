@@ -1,6 +1,10 @@
 package com.hellogroup.teamenu.domain.model;
 
+import dev.langchain4j.data.document.Document;
 import lombok.Getter;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * 食材分类枚举
@@ -53,5 +57,21 @@ public enum IngredientCategory {
             }
         }
         throw new IllegalArgumentException("未知的食材分类: " + code);
+    }
+    public static List<String> codes(){
+        return Stream.of(IngredientCategory.values()).map(IngredientCategory::getCode).toList();
+    }
+
+    public static List<String> names(){
+        return Stream.of(IngredientCategory.values()).map(IngredientCategory::getDisplayName).toList();
+    }
+
+    public static IngredientCategory getByDisplayName(String displayName) {
+        for (IngredientCategory category : values()) {
+            if (category.displayName.equals(displayName)) {
+                return category;
+            }
+        }
+        throw new IllegalArgumentException("未知的食材分类: " + displayName);
     }
 }
