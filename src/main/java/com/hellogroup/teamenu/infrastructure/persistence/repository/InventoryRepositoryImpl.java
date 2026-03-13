@@ -43,6 +43,8 @@ public class InventoryRepositoryImpl implements InventoryRepository {
         entity.setQuantity(ingredient.getQuantity());
         entity.setCategoryCode(ingredient.getCategoryCode());
         entity.setExpiryDate(ingredient.getExpiryDate());
+        entity.setUpdateTime(ingredient.getUpdateTime());
+        entity.setCreateTime(ingredient.getCreateTime());
         inventoryMapper.updateById(entity);
     }
     

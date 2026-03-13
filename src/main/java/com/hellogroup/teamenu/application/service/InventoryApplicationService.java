@@ -46,6 +46,7 @@ public class InventoryApplicationService {
         ingredient.setCategoryCode(dto.getCategoryCode());
         ingredient.setExpiryDate(dto.getExpiryDate());
         ingredient.setUpdateTime(LocalDateTime.now());
+        ingredient.setCreateTime(dto.getCreateTime());
         
         inventoryRepository.updateIngredient(ingredient);
         
