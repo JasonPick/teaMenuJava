@@ -12,6 +12,7 @@ import com.hellogroup.teamenu.infrastructure.remote.xiachufang.XiachufangRemoteS
 import com.hellogroup.teamenu.infrastructure.remote.xiaohongshu.XiaohongshuMcpClient;
 import com.hellogroup.teamenu.infrastructure.remote.xiaohongshu.XiaohongshuRecipeParser;
 import com.hellogroup.teamenu.infrastructure.remote.xiaohongshu.XiaohongshuRemoteService;
+import com.hellogroup.teamenu.infrastructure.remote.zhipu.LlmRecipeExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -254,7 +255,7 @@ public class RecipeApiService {
         }
 
         // 步骤2: 根据笔记类型选择 AI Extractor
-        com.hellogroup.teamenu.infrastructure.remote.zhipu.LlmRecipeExtractor.ExtractResult extractResult = null;
+        LlmRecipeExtractor.ExtractResult extractResult = null;
         
         JsonNode videoNode = feedDetail.path("video");
         JsonNode imagesNode = feedDetail.path("images");

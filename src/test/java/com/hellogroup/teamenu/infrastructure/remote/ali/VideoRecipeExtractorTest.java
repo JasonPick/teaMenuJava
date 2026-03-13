@@ -86,7 +86,7 @@ class VideoRecipeExtractorTest {
 
     @Test
     void import_xiaohongshu(){
-//        String url = "酸辣番茄鸡！汤汁浓郁鲜嫩入味！真的巨好吃 想告诉全... http://xhslink.com/o/6lkxbalP5bY\n" +
+//        String url = "这么好吃的拌饭！ 第一次做韩式拌饭，方法简单又巨好... http://xhslink.com/o/1iOH2y0Te0n\n" +
 //                "复制后打开【小红书】查看笔记！";
 //        recipeApiService.importFromXiaohongshu(url);
     }

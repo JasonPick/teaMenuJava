@@ -77,7 +77,21 @@ public class ImageRecipeExtractor {
 
     private LlmRecipeExtractor.ExtractResult parseResponse(String response) {
         try {
-            JsonNode root = objectMapper.readTree(response);
+            // 清理 Markdown 代码块标记（```json 和 ```）
+            String cleanedResponse = response.trim();
+            if (cleanedResponse.startsWith("```json")) {
+                cleanedResponse = cleanedResponse.substring(7); // 移除 ```json
+            } else if (cleanedResponse.startsWith("```")) {
+                cleanedResponse = cleanedResponse.substring(3); // 移除 ```
+            }
+            if (cleanedResponse.endsWith("```")) {
+                cleanedResponse = cleanedResponse.substring(0, cleanedResponse.length() - 3); // 移除末尾 ```
+            }
+            cleanedResponse = cleanedResponse.trim();
+            
+            log.debug("清理后的响应: {}", cleanedResponse);
+            
+            JsonNode root = objectMapper.readTree(cleanedResponse);
 
             LlmRecipeExtractor.ExtractResult result = new LlmRecipeExtractor.ExtractResult();
 
