@@ -1,6 +1,0 @@
-creation_rules:
-  - path_regex: \.(yaml|yml)$  # 匹配 YAML 文件
-    encrypted_regex: ^(data|stringData|password|token|key|secret|api_key|db_url|pass|credentials)$  # 只加密匹配这些键的 value
-    age:
-      - recipient: age1asxc3v54p7c9emtqxu76y6tvgcpgyxslgjqqd4cwnvewtuysr4ys5uu66y  # 你的公钥
-      # - recipient: age1anotherpubkey...  # 加其他成员公钥

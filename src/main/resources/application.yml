@@ -1,0 +1,170 @@
+server:
+    port: 8900
+    servlet:
+        context-path: /teaHomeMenu
+spring:
+    application:
+        name: teaHomeMenu-service
+    # 数据源配置
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://39.105.19.237:3306/teaHomeMenu?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+        username: root
+        password: ENC[AES256_GCM,data:LOl8BbbT,iv:s+742bFpkQIKBwWe4dPgTELW5WKxwkKGe6fHdPuG1iE=,tag:5/ru7g8cz+SCHKQ2CnA8uQ==,type:int]
+        # HikariCP连接池配置
+        hikari:
+            minimum-idle: 5
+            maximum-pool-size: 20
+            auto-commit: true
+            idle-timeout: 30000
+            pool-name: TeaMenuHikariCP
+            max-lifetime: 1800000
+            connection-timeout: 30000
+            connection-test-query: SELECT 1
+    # Jackson配置
+    jackson:
+        time-zone: GMT+8
+        date-format: yyyy-MM-dd HH:mm:ss
+        serialization:
+            write-dates-as-timestamps: false
+        default-property-inclusion: non_null
+# MyBatis Plus配置
+mybatis-plus:
+    # Mapper XML文件位置
+    mapper-locations: classpath:mapper/*.xml
+    # 实体类包路径
+    type-aliases-package: com.hellogroup.teamenu.infrastructure.persistence.entity
+    # 全局配置
+    global-config:
+        # 数据库配置
+        db-config:
+            # 主键类型（自增）
+            id-type: auto
+            # 逻辑删除字段
+            logic-delete-field: deleted
+            logic-delete-value: 1
+            logic-not-delete-value: 0
+        # 关闭Banner
+        banner: false
+    # 配置
+    configuration:
+        # 驼峰转下划线
+        map-underscore-to-camel-case: true
+        # 日志
+        log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+        # 缓存
+        cache-enabled: false
+# 智谱AI配置
+zhipu:
+    api:
+        #    key: e69ebd6dba2e40a3b844bba0095d3ec0.QHn53M9OiOlzLrED
+        key: ENC[AES256_GCM,data:OA6GGoX/vGyN1h8eTaQveS18Qe9Ge3vUKbe8mBdk0y78mhQE9jyoAaMtuwNnAcmOYA==,iv:shpTS9hhli691rntvTSU3S6dBrnQFsCmEYdH8TrHTHg=,tag:73Bb7pVIFdVdTzZuNU3ovA==,type:str]
+        model: glm-4.7-flash
+# 阿里AI配置
+ali:
+    ai:
+        video:
+            api:
+                key: ENC[AES256_GCM,data:2DEHalNV3NckBngptsPDRQLyIjNbrRUgdBAiZtDUNJjfrdI=,iv:peDFBTMODFAkDtVjOUoKtsSuOqqPaoi2HmCVegV3ul8=,tag:KV60vW3UKcmwHz5zcHc7yw==,type:str]
+openai:
+    api:
+        key: ENC[AES256_GCM,data:o5OuT8aIiF5BU5FvZA7fEhm7gdroMDRwBW70g80L0SMW1rV0TdhixQaQM/082LEOuEl3ISpJEWRsAfVFV0shHIA7LIdXQbQxONi9PD3l+dOSTFipYlpJVSvhZrSgkXKRrQiFS58MrB/NlV0Zv79v8jC+8hhrhSuVjrdnM5tSSLHFiW0IK2/NQWeywlcrnaV8vUba5TewZMek8fe8PgaJuquNwlXr,iv:FuSHa58EKX7k8uJBDw9JocuSY4g3rBNSmZC4CIyrsCI=,tag:5s76ejy7DkOq/6L6xxdTVw==,type:str]
+# 小红书配置
+xiaohongshu:
+    # HTTP API 配置（优先使用）
+    api:
+        url: http://39.105.19.237:8901
+    # MCP 配置（备用）
+    mcp:
+        server:
+            # 远程服务器地址 (如果配置了 URL, 则优先使用远程连接)
+            url: http://39.105.19.237:18060
+            # SSE 端点路径 (默认 /sse)
+            sse-endpoint: /mcp
+# 文件存储配置
+file:
+    storage:
+        # 本地存储路径（相对路径，在 JAR 包同级目录）
+        local-path: ./uploads
+        # 访问URL前缀
+        url-prefix: http://39.105.19.237:8900/teaHomeMenu/files
+# 注意：日志配置已移至 logback-spring.xml 文件
+sops:
+    age:
+        - recipient: age1asxc3v54p7c9emtqxu76y6tvgcpgyxslgjqqd4cwnvewtuysr4ys5uu66y
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqZDBHeFpNbndTUVNaTG9Z
+            cTdFb0t1WEhLbXo2K01TNXFuRGUrVUg3K0ZvCmhnWWgrQ3h3VWtxdVNQUDZ5VGM3
+            QzVWM0FyYWRyMCtPZVdhcWVVV085ZlUKLS0tIEsrNklVMXdjcUk5ZjBULzN4TklT
+            UERQQTJjRzA5S0NzSU1FZG9MOHR6eE0KbogD/ah9MdRxDaUuQJLn13PtB+90cylK
+            PxFjw9oTAa4+as0hUtlvoVAOcT2nJXlsYr+ZkeM4qkJ3hpkirT0NTA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-13T06:46:52Z"
+    mac: ENC[AES256_GCM,data:qM9WMQWI92V3J38+0tUOoEcTUu8+aH8qTryYarJfU0QvMzy51ywgrY9ucygMn4eQrKwOu53z0kqfxecXEuXCg+rKnr9BZ9w0o+X0JO7hz/WR+dugjhHmTV6yRN9vGCvavRZolPwZNkIUhmcwknmvbmsA3qaaCnI7+OcWZxRMbfs=,iv:Lu+/AHFXOv+1bqsHggi45/JpqEjZVxYRuHbS5k6Ybf8=,tag:j0S8nIM57l1Rssy8GAKQEQ==,type:str]
+    encrypted_regex: ^(data|stringData|password|token|key|secret|api_key|db_url|pass|credentials)$
+    version: 3.12.1
+---
+# 开发环境配置
+spring:
+    config:
+        activate:
+            on-profile: dev
+    datasource:
+        url: jdbc:mysql://39.105.19.237:3306/teaHomeMenu?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    # SQL初始化配置(仅开发环境)
+    sql:
+        init:
+            # never: 不自动执行, always: 总是执行, embedded: 仅嵌入式数据库执行
+            mode: never
+            encoding: utf-8
+            continue-on-error: false
+file:
+    storage:
+        local-path: ./uploads
+        url-prefix: http://localhost:8900/teaHomeMenu/files
+# 注意：日志配置已移至 logback-spring.xml 文件
+sops:
+    age:
+        - recipient: age1asxc3v54p7c9emtqxu76y6tvgcpgyxslgjqqd4cwnvewtuysr4ys5uu66y
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqZDBHeFpNbndTUVNaTG9Z
+            cTdFb0t1WEhLbXo2K01TNXFuRGUrVUg3K0ZvCmhnWWgrQ3h3VWtxdVNQUDZ5VGM3
+            QzVWM0FyYWRyMCtPZVdhcWVVV085ZlUKLS0tIEsrNklVMXdjcUk5ZjBULzN4TklT
+            UERQQTJjRzA5S0NzSU1FZG9MOHR6eE0KbogD/ah9MdRxDaUuQJLn13PtB+90cylK
+            PxFjw9oTAa4+as0hUtlvoVAOcT2nJXlsYr+ZkeM4qkJ3hpkirT0NTA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-13T06:46:52Z"
+    mac: ENC[AES256_GCM,data:qM9WMQWI92V3J38+0tUOoEcTUu8+aH8qTryYarJfU0QvMzy51ywgrY9ucygMn4eQrKwOu53z0kqfxecXEuXCg+rKnr9BZ9w0o+X0JO7hz/WR+dugjhHmTV6yRN9vGCvavRZolPwZNkIUhmcwknmvbmsA3qaaCnI7+OcWZxRMbfs=,iv:Lu+/AHFXOv+1bqsHggi45/JpqEjZVxYRuHbS5k6Ybf8=,tag:j0S8nIM57l1Rssy8GAKQEQ==,type:str]
+    encrypted_regex: ^(data|stringData|password|token|key|secret|api_key|db_url|pass|credentials)$
+    version: 3.12.1
+---
+# 生产环境配置
+spring:
+    config:
+        activate:
+            on-profile: prod
+file:
+    storage:
+        local-path: ./uploads
+        url-prefix: http://39.105.19.237:8900/teaHomeMenu/files
+# 注意：日志配置已移至 logback-spring.xml 文件
+xiachufang:
+    api:
+        url: http://39.105.19.237:5000
+sops:
+    age:
+        - recipient: age1asxc3v54p7c9emtqxu76y6tvgcpgyxslgjqqd4cwnvewtuysr4ys5uu66y
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqZDBHeFpNbndTUVNaTG9Z
+            cTdFb0t1WEhLbXo2K01TNXFuRGUrVUg3K0ZvCmhnWWgrQ3h3VWtxdVNQUDZ5VGM3
+            QzVWM0FyYWRyMCtPZVdhcWVVV085ZlUKLS0tIEsrNklVMXdjcUk5ZjBULzN4TklT
+            UERQQTJjRzA5S0NzSU1FZG9MOHR6eE0KbogD/ah9MdRxDaUuQJLn13PtB+90cylK
+            PxFjw9oTAa4+as0hUtlvoVAOcT2nJXlsYr+ZkeM4qkJ3hpkirT0NTA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-13T06:46:52Z"
+    mac: ENC[AES256_GCM,data:qM9WMQWI92V3J38+0tUOoEcTUu8+aH8qTryYarJfU0QvMzy51ywgrY9ucygMn4eQrKwOu53z0kqfxecXEuXCg+rKnr9BZ9w0o+X0JO7hz/WR+dugjhHmTV6yRN9vGCvavRZolPwZNkIUhmcwknmvbmsA3qaaCnI7+OcWZxRMbfs=,iv:Lu+/AHFXOv+1bqsHggi45/JpqEjZVxYRuHbS5k6Ybf8=,tag:j0S8nIM57l1Rssy8GAKQEQ==,type:str]
+    encrypted_regex: ^(data|stringData|password|token|key|secret|api_key|db_url|pass|credentials)$
+    version: 3.12.1
