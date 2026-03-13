@@ -8,9 +8,9 @@ spring:
     # 数据源配置
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://39.105.19.237:3306/teaHomeMenu?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+        url: ENC[AES256_GCM,data:PMxcT/W1lGql5vP03g5kJsIQ0raB8uZS8wJ8RjqXhJFQqXXIhPGQLQWU7cb51/9Eonk+t3RoutndgKPSC/QCPBhKmqCy8NL1MRWjMNw9tQ0FuAebORiokgC5ShzUUovWAeoWOAXxsdHheEXaTkCzZnsfFL1XNEhTDW4gxRFDTF8+owzAS1zvaAVqxXd2ACHJzOAwsCOXsJ0p,iv:b0ZsMP8rkzKBkrt8dbEckOtsgSnpwlTmfF9hux5R2i0=,tag:le/qj8+igk4Bo9NRrcH+iA==,type:str]
         username: root
-        password: ENC[AES256_GCM,data:LOl8BbbT,iv:s+742bFpkQIKBwWe4dPgTELW5WKxwkKGe6fHdPuG1iE=,tag:5/ru7g8cz+SCHKQ2CnA8uQ==,type:int]
+        password: ENC[AES256_GCM,data:mTLFcltS,iv:YRGFNgYLPlAoPQFV2vxmSowSLXbh61OfU6Zsw+JHbMY=,tag:8e7PKIwi+PsoW6pwWDAQ/Q==,type:int]
         # HikariCP连接池配置
         hikari:
             minimum-idle: 5
@@ -58,27 +58,27 @@ mybatis-plus:
 zhipu:
     api:
         #    key: e69ebd6dba2e40a3b844bba0095d3ec0.QHn53M9OiOlzLrED
-        key: ENC[AES256_GCM,data:OA6GGoX/vGyN1h8eTaQveS18Qe9Ge3vUKbe8mBdk0y78mhQE9jyoAaMtuwNnAcmOYA==,iv:shpTS9hhli691rntvTSU3S6dBrnQFsCmEYdH8TrHTHg=,tag:73Bb7pVIFdVdTzZuNU3ovA==,type:str]
+        key: ENC[AES256_GCM,data:d/ea/1aulvpjJj9Zybj6ecJpUcXKL8wJkyyYAX11vVs8E7+OxBOLocxpuhO3HqhGUA==,iv:Y++OdvstyjUD42Bk+HjWBAe/bC6hztggugOu4Cds2xo=,tag:JFpqcvC+MNGLGdHI4bvsDQ==,type:str]
         model: glm-4.7-flash
 # 阿里AI配置
 ali:
     ai:
         video:
             api:
-                key: ENC[AES256_GCM,data:2DEHalNV3NckBngptsPDRQLyIjNbrRUgdBAiZtDUNJjfrdI=,iv:peDFBTMODFAkDtVjOUoKtsSuOqqPaoi2HmCVegV3ul8=,tag:KV60vW3UKcmwHz5zcHc7yw==,type:str]
+                key: ENC[AES256_GCM,data:qBI2H6JLcpxXq7kI7wLTUF7aUApwL9eQ5qvcLxaBf2GKQVA=,iv:N2okyyii67x+HSsPRKC5FnYbQXWFGglVjdVI8iJ2sZs=,tag:ywsIqcRW96oWw1oQuAOP8Q==,type:str]
 openai:
     api:
-        key: ENC[AES256_GCM,data:o5OuT8aIiF5BU5FvZA7fEhm7gdroMDRwBW70g80L0SMW1rV0TdhixQaQM/082LEOuEl3ISpJEWRsAfVFV0shHIA7LIdXQbQxONi9PD3l+dOSTFipYlpJVSvhZrSgkXKRrQiFS58MrB/NlV0Zv79v8jC+8hhrhSuVjrdnM5tSSLHFiW0IK2/NQWeywlcrnaV8vUba5TewZMek8fe8PgaJuquNwlXr,iv:FuSHa58EKX7k8uJBDw9JocuSY4g3rBNSmZC4CIyrsCI=,tag:5s76ejy7DkOq/6L6xxdTVw==,type:str]
+        key: ENC[AES256_GCM,data:tvdvtX/eFT7p/7Tb0QIV0BKYeZ7NzThTNoZTCtmpYbbwhULwhaIUD1Zy0DvOnilJisMF+eABcSoaHJoKCit6svzPEnIAOnnlmz0yaCVEXj27UpIst/g23xgl1T3lLdnbkZOKcx5aaDZh/Cy5P4S5s+KAX49kIFdV3l12tfmTreGhAsS1xgnLzE227VYlDCDFhXu948rEqh95ibEzx53yPXrwgBIu,iv:20LL6IgBqiFHl6rv3bgLLstOFdgXSDfH0sKPuYyZBaA=,tag:Utz9GhTIINkiEcFMtxv1bA==,type:str]
 # 小红书配置
 xiaohongshu:
     # HTTP API 配置（优先使用）
     api:
-        url: http://39.105.19.237:8901
+        url: ENC[AES256_GCM,data:CBrjhRqfGVdOOoTQHeBeThJOG+Uncml4Vg==,iv:0SUCWEIg08FSRhnHSbFgolXYfKdbiIa6r9Rt0x+LLhQ=,tag:k0m8VSaMd3iVhz8r6VxYiQ==,type:str]
     # MCP 配置（备用）
     mcp:
         server:
             # 远程服务器地址 (如果配置了 URL, 则优先使用远程连接)
-            url: http://39.105.19.237:18060
+            url: ENC[AES256_GCM,data:PxvQ1r2X0MTilEWVNND+o8eI4Vl9wDfvELo=,iv:g4RhJu1otSpg8c2Nd5eySDfAyOsX1f2n+UtgWnLiHTY=,tag:5XNC+detc6h8fhElwXHJ+A==,type:str]
             # SSE 端点路径 (默认 /sse)
             sse-endpoint: /mcp
 # 文件存储配置
@@ -87,22 +87,22 @@ file:
         # 本地存储路径（相对路径，在 JAR 包同级目录）
         local-path: ./uploads
         # 访问URL前缀
-        url-prefix: http://39.105.19.237:8900/teaHomeMenu/files
+        url-prefix: ENC[AES256_GCM,data:u1/SIlxBc0mq2+BjQhLCky4MzCQz94mq9cx9LPQ6p8kGROUpdH7sHYJrrw==,iv:VYpkCSLBnZbe+hFS7m5jjWBkta471mKWmN6YcUJPBJg=,tag:UE1EsRi79jpwxIVvV2FvxQ==,type:str]
 # 注意：日志配置已移至 logback-spring.xml 文件
 sops:
     age:
         - recipient: age1asxc3v54p7c9emtqxu76y6tvgcpgyxslgjqqd4cwnvewtuysr4ys5uu66y
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqZDBHeFpNbndTUVNaTG9Z
-            cTdFb0t1WEhLbXo2K01TNXFuRGUrVUg3K0ZvCmhnWWgrQ3h3VWtxdVNQUDZ5VGM3
-            QzVWM0FyYWRyMCtPZVdhcWVVV085ZlUKLS0tIEsrNklVMXdjcUk5ZjBULzN4TklT
-            UERQQTJjRzA5S0NzSU1FZG9MOHR6eE0KbogD/ah9MdRxDaUuQJLn13PtB+90cylK
-            PxFjw9oTAa4+as0hUtlvoVAOcT2nJXlsYr+ZkeM4qkJ3hpkirT0NTA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB3V1NlSHloVHl3UWNhTFpU
+            Y0l4TWVaT2hHR20rQzNXOFlEMDF6SC9hbEZBCkRBN3ZCcVRKREcyR29jZ0hSNktO
+            MDAwcmFxRUlFQjN0YkM3VGIrWTdtSXcKLS0tIE1TbWpRbEFYMEdkWFNLb3BBcUhK
+            MTBYUTF5RFFKbWxHalpEOFZtS05HamsKfW4qoHwUq2dU3M8d64nJIKeJHUdS1M14
+            RHvdRghRCN/br6WbW8ilTzrjQWFzyvn4t8gj9y3ptQK0Nxe1oxTxYQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-13T06:46:52Z"
-    mac: ENC[AES256_GCM,data:qM9WMQWI92V3J38+0tUOoEcTUu8+aH8qTryYarJfU0QvMzy51ywgrY9ucygMn4eQrKwOu53z0kqfxecXEuXCg+rKnr9BZ9w0o+X0JO7hz/WR+dugjhHmTV6yRN9vGCvavRZolPwZNkIUhmcwknmvbmsA3qaaCnI7+OcWZxRMbfs=,iv:Lu+/AHFXOv+1bqsHggi45/JpqEjZVxYRuHbS5k6Ybf8=,tag:j0S8nIM57l1Rssy8GAKQEQ==,type:str]
-    encrypted_regex: ^(data|stringData|password|token|key|secret|api_key|db_url|pass|credentials)$
+    lastmodified: "2026-03-13T06:55:31Z"
+    mac: ENC[AES256_GCM,data:sHGup9ODOb5PF2uhT2DRN2CeJ6rh9Tp3ps6asLwB6TjRZbZgXIdNaTJeVQrmi/tJuCIxMuNGyrGzepNVwBbDa2E2eYcERtbfwQXvWawpFHFL14fLNW0QKr93BvzCLCnswsoB9Dly9qaF/0l+dLk0ABEsJl78X76PkiCJxmExLug=,iv:D7KnKcG6i3MNoTaCvmI78M4I02GT8P3S9U7ObPK4PrA=,tag:BMqFm4ZWOxIe3R9GZWNWjg==,type:str]
+    encrypted_regex: ^(data|stringData|password|token|key|secret|api_key|db_url|pass|credentials|url|url-prefix)$
     version: 3.12.1
 ---
 # 开发环境配置
@@ -111,7 +111,7 @@ spring:
         activate:
             on-profile: dev
     datasource:
-        url: jdbc:mysql://39.105.19.237:3306/teaHomeMenu?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+        url: ENC[AES256_GCM,data:zo5nEQz8Q9LpqK+KyTrDb73MGycNJi6ikMnZ2V/oye7nGk3Mbz5GGJaQZG4rAaKsrdevIXOcQy8Zuym2HlZLx2oakrfkrBVftIbh5Q6mq3aGKuGrR+vjD6TS09516a/G6//ZDNC8PVlYnnftmngFqOSXOJuN2GVZjvDDi8vKGU96WDVt3JGzxOlfxhfWLVBGIITiuiu7tqDE,iv:UMdcvkNrB4kinKWN72DWtDxNHvT7hz4xrdVqoKoCVF8=,tag:Vh3KH7PuzWFDsIdHOJuOdw==,type:str]
     # SQL初始化配置(仅开发环境)
     sql:
         init:
@@ -122,22 +122,22 @@ spring:
 file:
     storage:
         local-path: ./uploads
-        url-prefix: http://localhost:8900/teaHomeMenu/files
+        url-prefix: ENC[AES256_GCM,data:USrvJdHFPU2358SjpgCbBbzJqLDWaw6ILvxCDiyUOk+n+jJBKvyO,iv:mvN5E0Ff4P+TJEQK4GbBdPng2gpxDDTdC+YycUpqnAQ=,tag:+sd3iF5P9j+1ZoGwov8G9A==,type:str]
 # 注意：日志配置已移至 logback-spring.xml 文件
 sops:
     age:
         - recipient: age1asxc3v54p7c9emtqxu76y6tvgcpgyxslgjqqd4cwnvewtuysr4ys5uu66y
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqZDBHeFpNbndTUVNaTG9Z
-            cTdFb0t1WEhLbXo2K01TNXFuRGUrVUg3K0ZvCmhnWWgrQ3h3VWtxdVNQUDZ5VGM3
-            QzVWM0FyYWRyMCtPZVdhcWVVV085ZlUKLS0tIEsrNklVMXdjcUk5ZjBULzN4TklT
-            UERQQTJjRzA5S0NzSU1FZG9MOHR6eE0KbogD/ah9MdRxDaUuQJLn13PtB+90cylK
-            PxFjw9oTAa4+as0hUtlvoVAOcT2nJXlsYr+ZkeM4qkJ3hpkirT0NTA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB3V1NlSHloVHl3UWNhTFpU
+            Y0l4TWVaT2hHR20rQzNXOFlEMDF6SC9hbEZBCkRBN3ZCcVRKREcyR29jZ0hSNktO
+            MDAwcmFxRUlFQjN0YkM3VGIrWTdtSXcKLS0tIE1TbWpRbEFYMEdkWFNLb3BBcUhK
+            MTBYUTF5RFFKbWxHalpEOFZtS05HamsKfW4qoHwUq2dU3M8d64nJIKeJHUdS1M14
+            RHvdRghRCN/br6WbW8ilTzrjQWFzyvn4t8gj9y3ptQK0Nxe1oxTxYQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-13T06:46:52Z"
-    mac: ENC[AES256_GCM,data:qM9WMQWI92V3J38+0tUOoEcTUu8+aH8qTryYarJfU0QvMzy51ywgrY9ucygMn4eQrKwOu53z0kqfxecXEuXCg+rKnr9BZ9w0o+X0JO7hz/WR+dugjhHmTV6yRN9vGCvavRZolPwZNkIUhmcwknmvbmsA3qaaCnI7+OcWZxRMbfs=,iv:Lu+/AHFXOv+1bqsHggi45/JpqEjZVxYRuHbS5k6Ybf8=,tag:j0S8nIM57l1Rssy8GAKQEQ==,type:str]
-    encrypted_regex: ^(data|stringData|password|token|key|secret|api_key|db_url|pass|credentials)$
+    lastmodified: "2026-03-13T06:55:31Z"
+    mac: ENC[AES256_GCM,data:sHGup9ODOb5PF2uhT2DRN2CeJ6rh9Tp3ps6asLwB6TjRZbZgXIdNaTJeVQrmi/tJuCIxMuNGyrGzepNVwBbDa2E2eYcERtbfwQXvWawpFHFL14fLNW0QKr93BvzCLCnswsoB9Dly9qaF/0l+dLk0ABEsJl78X76PkiCJxmExLug=,iv:D7KnKcG6i3MNoTaCvmI78M4I02GT8P3S9U7ObPK4PrA=,tag:BMqFm4ZWOxIe3R9GZWNWjg==,type:str]
+    encrypted_regex: ^(data|stringData|password|token|key|secret|api_key|db_url|pass|credentials|url|url-prefix)$
     version: 3.12.1
 ---
 # 生产环境配置
@@ -148,23 +148,23 @@ spring:
 file:
     storage:
         local-path: ./uploads
-        url-prefix: http://39.105.19.237:8900/teaHomeMenu/files
+        url-prefix: ENC[AES256_GCM,data:IYJSuWA1DVojbNAwTnYW7+A46esw8t2bJC5+2mUp6F5h9yDv2AwwOHGLTg==,iv:9G3bJnbXA6bpUQN8OlQ4c2sHvXKWDwESpxVuh2xe33Q=,tag:xEKwnHhzTm62TB5I23sYrQ==,type:str]
 # 注意：日志配置已移至 logback-spring.xml 文件
 xiachufang:
     api:
-        url: http://39.105.19.237:5000
+        url: ENC[AES256_GCM,data:asnUbjZ0TMTPKgKOql+7laIhvsNo+JZARQ==,iv:2vzcEVsKeFwgYl75NJWDpw87P37HuCjDbmUsBVFqyxk=,tag:2MNfHgqcwvQ03vIfeC6nVg==,type:str]
 sops:
     age:
         - recipient: age1asxc3v54p7c9emtqxu76y6tvgcpgyxslgjqqd4cwnvewtuysr4ys5uu66y
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqZDBHeFpNbndTUVNaTG9Z
-            cTdFb0t1WEhLbXo2K01TNXFuRGUrVUg3K0ZvCmhnWWgrQ3h3VWtxdVNQUDZ5VGM3
-            QzVWM0FyYWRyMCtPZVdhcWVVV085ZlUKLS0tIEsrNklVMXdjcUk5ZjBULzN4TklT
-            UERQQTJjRzA5S0NzSU1FZG9MOHR6eE0KbogD/ah9MdRxDaUuQJLn13PtB+90cylK
-            PxFjw9oTAa4+as0hUtlvoVAOcT2nJXlsYr+ZkeM4qkJ3hpkirT0NTA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB3V1NlSHloVHl3UWNhTFpU
+            Y0l4TWVaT2hHR20rQzNXOFlEMDF6SC9hbEZBCkRBN3ZCcVRKREcyR29jZ0hSNktO
+            MDAwcmFxRUlFQjN0YkM3VGIrWTdtSXcKLS0tIE1TbWpRbEFYMEdkWFNLb3BBcUhK
+            MTBYUTF5RFFKbWxHalpEOFZtS05HamsKfW4qoHwUq2dU3M8d64nJIKeJHUdS1M14
+            RHvdRghRCN/br6WbW8ilTzrjQWFzyvn4t8gj9y3ptQK0Nxe1oxTxYQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-13T06:46:52Z"
-    mac: ENC[AES256_GCM,data:qM9WMQWI92V3J38+0tUOoEcTUu8+aH8qTryYarJfU0QvMzy51ywgrY9ucygMn4eQrKwOu53z0kqfxecXEuXCg+rKnr9BZ9w0o+X0JO7hz/WR+dugjhHmTV6yRN9vGCvavRZolPwZNkIUhmcwknmvbmsA3qaaCnI7+OcWZxRMbfs=,iv:Lu+/AHFXOv+1bqsHggi45/JpqEjZVxYRuHbS5k6Ybf8=,tag:j0S8nIM57l1Rssy8GAKQEQ==,type:str]
-    encrypted_regex: ^(data|stringData|password|token|key|secret|api_key|db_url|pass|credentials)$
+    lastmodified: "2026-03-13T06:55:31Z"
+    mac: ENC[AES256_GCM,data:sHGup9ODOb5PF2uhT2DRN2CeJ6rh9Tp3ps6asLwB6TjRZbZgXIdNaTJeVQrmi/tJuCIxMuNGyrGzepNVwBbDa2E2eYcERtbfwQXvWawpFHFL14fLNW0QKr93BvzCLCnswsoB9Dly9qaF/0l+dLk0ABEsJl78X76PkiCJxmExLug=,iv:D7KnKcG6i3MNoTaCvmI78M4I02GT8P3S9U7ObPK4PrA=,tag:BMqFm4ZWOxIe3R9GZWNWjg==,type:str]
+    encrypted_regex: ^(data|stringData|password|token|key|secret|api_key|db_url|pass|credentials|url|url-prefix)$
     version: 3.12.1
