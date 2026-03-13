@@ -50,43 +50,73 @@ public class IngredientService {
 
         @UserMessage("""
                      你是一个食材分类助手。根据用户提供的【分类标签】，对【食材列表】中的每个食材归入对应分类。
+                     
                      ## 规则
-
+                     
                      1. 分类只能使用用户提供的分类标签，不得自行创建新分类
                      2. 每个食材只归入一个分类
-                     3. 无法归入任何分类的，value 填「未分类」
-
+                     3. 无法归入任何分类的，value 填「其他」
+                     
+                     ## 重要分类指引
+                     
+                     **蔬菜水果类包括**：
+                     - 所有蔬菜（如白菜、菠菜、芹菜、生菜、番茄、黄瓜、茄子、辣椒、胡萝卜等）
+                     - 所有水果（如苹果、香蕉、橙子、葡萄、西瓜等）
+                     - **所有菌菇类**（如香菇、蘑菇、金针菇、杏鲍菇、海鲜菇、木耳、银耳、平菇、草菇、茶树菇等）
+                     - 豆类蔬菜（如豆芽、豌豆、四季豆、扁豆等）
+                     - 根茎类（如土豆、红薯、山药、莲藕、芋头等）
+                     
+                     **肉禽蛋类包括**：
+                     - 肉类（猪肉、牛肉、羊肉、兔肉等）
+                     - 禽类（鸡肉、鸭肉、鹅肉等）
+                     - 蛋类（鸡蛋、鸭蛋、鹌鹑蛋等）
+                     - 海鲜（鱼、虾、蟹、贝类等）
+                     
+                     **熟食类包括**：
+                     - 熟制肉类（卤肉、烧鸡、火腿等）
+                     - 剩菜剩饭
+                     - 已烹饪的食物
+                     
+                     **零食类包括**：
+                     - 饼干、薯片、糖果等
+                     - 坚果、果脯等
+                     
+                     **酱料类包括**：
+                     - 调味酱（酱油、醋、蚝油、豆瓣酱等）
+                     - 调味料（盐、糖、味精、鸡精、胡椒粉、五香粉等）
+                     - 油类（食用油、香油等）
+                     
                      ## 输入格式
-
+                     
                      分类标签：[标签1]、[标签2]、[标签3]...
                      食材列表：[食材1]、[食材2]、[食材3]...
-
+                     
                      ## 输出格式
-
+                     
                      以 JSON 格式返回，key 为食材，value 为分类：
-
+                     
                      {
                        "食材1": "分类X",
                        "食材2": "分类Y"
                      }
-
+                     
                      ## 示例
-
+                     
                      用户输入：
-                     分类标签：蔬菜、主食、肉禽蛋
-                     食材列表：土豆、米饭、猪肉、白菜、鸡蛋、馒头
-
+                     分类标签：蔬菜水果、肉禽蛋、酱料
+                     食材列表：海鲜菇、香菇、金针菇、猪肉、鸡精、白菜
+                     
                      你的输出：
-
+                     
                      {
-                       "土豆": "主食",
-                       "米饭": "主食",
+                       "海鲜菇": "蔬菜水果",
+                       "香菇": "蔬菜水果",
+                       "金针菇": "蔬菜水果",
                        "猪肉": "肉禽蛋",
-                       "白菜": "蔬菜",
-                       "鸡蛋": "肉禽蛋",
-                       "馒头": "主食"
+                       "鸡精": "酱料",
+                       "白菜": "蔬菜水果"
                      }
-
+                     
                      食材列表：{{ingredient}}
                      分类标签：{{classification}}
                 """)
@@ -136,21 +166,9 @@ public class IngredientService {
         if (MapUtils.isEmpty(aiResult)) {
             return result;
         }
-        Map<String, String> aiResultWithCode = new HashMap<>();
-        aiResult.forEach(
-                (k, v) -> aiResult.put(k, IngredientCategory.getByDisplayName(v).getCode())
-        );
 
-//        List<Document> documentList = aiResult.entrySet()
-//                .stream()
-//                .map(o -> {
-//                    String v = IngredientCategory.getByDisplayName(o.getValue()).getCode();
-//                    String k = o.getKey();
-//                    return Document.from(k, Metadata.from("category", v));
-//                })
-//                .toList();
-//        miluvsEmbeddingStoreIngestor.ingest(documentList);
-        result.putAll(aiResultWithCode);
+        // 直接返回 AI 的结果（displayName），不需要转换
+        result.putAll(aiResult);
         return result;
     }
 }
