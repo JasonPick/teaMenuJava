@@ -37,7 +37,12 @@ public enum IngredientCategory {
     /**
      * 酱料
      */
-    SEASONING("酱料", "SEASONING");
+    SEASONING("酱料", "SEASONING"),
+    
+    /**
+     * 其他
+     */
+    OTHER("其他", "OTHER");
     
     private final String displayName;
     private final String code;
@@ -45,6 +50,22 @@ public enum IngredientCategory {
     IngredientCategory(String displayName, String code) {
         this.displayName = displayName;
         this.code = code;
+    }
+    
+    /**
+     * 获取该分类食材的默认保质期（天数）
+     * 
+     * @return 保质期天数
+     */
+    public int getDefaultExpiryDays() {
+        return switch (this) {
+            case VEGETABLES_FRUITS -> 7;      // 蔬菜水果：7天
+            case MEAT_POULTRY_EGGS -> 3;      // 肉禽蛋：3天（冷藏）
+            case COOKED_FOOD -> 2;            // 熟食：2天
+            case SNACKS -> 30;                // 零食：30天
+            case SEASONING -> 90;             // 酱料：90天
+            case OTHER -> 7;                  // 其他：默认7天
+        };
     }
     
     /**

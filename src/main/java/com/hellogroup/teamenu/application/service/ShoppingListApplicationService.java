@@ -2,11 +2,14 @@ package com.hellogroup.teamenu.application.service;
 
 import com.hellogroup.teamenu.application.dto.GenerateShoppingListRequest;
 import com.hellogroup.teamenu.application.dto.ShoppingItemDTO;
+import com.hellogroup.teamenu.domain.model.IngredientCategory;
 import com.hellogroup.teamenu.domain.model.InventoryIngredient;
 import com.hellogroup.teamenu.domain.model.ShoppingItem;
 import com.hellogroup.teamenu.domain.repository.InventoryRepository;
 import com.hellogroup.teamenu.domain.repository.ShoppingListRepository;
+import com.hellogroup.teamenu.domain.service.IngredientService;
 import com.hellogroup.teamenu.domain.service.ShoppingListGeneratorService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +23,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * 采购清单应用服务
  */
+@Slf4j
 @Service
 public class ShoppingListApplicationService {
     
@@ -36,6 +41,9 @@ public class ShoppingListApplicationService {
     
     @Resource
     private ShoppingListGeneratorService shoppingListGeneratorService;
+    
+    @Resource
+    private IngredientService ingredientService;
     
     /**
      * 生成采购清单
@@ -206,7 +214,6 @@ public class ShoppingListApplicationService {
         
         // 2. 根据库存状态处理
         String inventoryStatus = item.getInventoryStatus();
-        LocalDate expiryDate = LocalDate.now().plusDays(7); // 默认7天后过期
         
         if ("EXPIRED".equals(inventoryStatus)) {
             // 有但已过期,需要更新库存(删除旧的,添加新的)
@@ -219,11 +226,41 @@ public class ShoppingListApplicationService {
             return;
         }
         
-        // 3. 添加到冰箱库存
+        // 3. 使用AI分类服务获取食材分类
+        String categoryCode = "OTHER"; // 默认分类
+        int expiryDays = 7; // 默认保质期7天
+        
+        try {
+            List<String> ingredientList = Collections.singletonList(item.getIngredientName());
+            Map<String, String> classificationResult = ingredientService.ingredientClassification(ingredientList);
+            
+            if (classificationResult != null && classificationResult.containsKey(item.getIngredientName())) {
+                String displayName = classificationResult.get(item.getIngredientName());
+                // 根据displayName获取对应的categoryCode和保质期
+                IngredientCategory category = IngredientCategory.getByDisplayName(displayName);
+                if (category != null) {
+                    categoryCode = category.getCode();
+                    expiryDays = category.getDefaultExpiryDays();
+                    log.info("食材 {} 分类为: {} ({}), 保质期: {}天", 
+                            item.getIngredientName(), displayName, categoryCode, expiryDays);
+                } else {
+                    log.warn("未找到分类 {} 对应的枚举值,使用默认分类 OTHER (保质期7天)", displayName);
+                }
+            } else {
+                log.warn("AI分类服务未返回食材 {} 的分类结果,使用默认分类 OTHER (保质期7天)", item.getIngredientName());
+            }
+        } catch (Exception e) {
+            log.error("调用AI分类服务失败,使用默认分类 OTHER (保质期7天)", e);
+        }
+        
+        // 4. 计算过期日期
+        LocalDate expiryDate = LocalDate.now().plusDays(expiryDays);
+        
+        // 5. 添加到冰箱库存
         InventoryIngredient newInventory = InventoryIngredient.builder()
                 .name(item.getIngredientName())
                 .quantity(item.getQuantity())
-                .categoryCode("OTHER") // 默认分类,用户可后续修改
+                .categoryCode(categoryCode)
                 .expiryDate(expiryDate)
                 .createTime(LocalDateTime.now())
                 .updateTime(LocalDateTime.now())
