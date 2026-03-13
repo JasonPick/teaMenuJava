@@ -136,17 +136,21 @@ public class IngredientService {
         if (MapUtils.isEmpty(aiResult)) {
             return result;
         }
+        Map<String, String> aiResultWithCode = new HashMap<>();
+        aiResult.forEach(
+                (k, v) -> aiResult.put(k, IngredientCategory.getByDisplayName(v).getCode())
+        );
 
-        List<Document> documentList = aiResult.entrySet()
-                .stream()
-                .map(o -> {
-                    String v = IngredientCategory.getByDisplayName(o.getValue()).getCode();
-                    String k = o.getKey();
-                    return Document.from(k, Metadata.from("category", v));
-                })
-                .toList();
-        miluvsEmbeddingStoreIngestor.ingest(documentList);
-        result.putAll(aiResult);
+//        List<Document> documentList = aiResult.entrySet()
+//                .stream()
+//                .map(o -> {
+//                    String v = IngredientCategory.getByDisplayName(o.getValue()).getCode();
+//                    String k = o.getKey();
+//                    return Document.from(k, Metadata.from("category", v));
+//                })
+//                .toList();
+//        miluvsEmbeddingStoreIngestor.ingest(documentList);
+        result.putAll(aiResultWithCode);
         return result;
     }
 }
