@@ -17,6 +17,9 @@ public class AiModelConfig {
     @Value("${ali.ai.video.model:qwen3-vl-235b-a22b-thinking}")
     public String aliAiVideoModel;
 
+    @Value("${openai.api.key:}")
+    public String openAiApiKey;
+
     @Bean
     public OpenAiChatModel aliAiVideoModel() {
         return OpenAiChatModel.builder()
@@ -27,5 +30,16 @@ public class AiModelConfig {
                 .logResponses(true)
                 .build();
         
+    }
+
+    @Bean
+    public OpenAiChatModel openAiChatModel() {
+        return OpenAiChatModel.builder()
+                              .baseUrl("http://langchain4j.dev/demo/openai/v1")
+                              .apiKey("demo")
+                              .logRequests(true)
+                              .logResponses(true)
+                              .modelName("gpt-4o-mini")
+                              .build();
     }
 }

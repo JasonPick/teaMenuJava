@@ -11,6 +11,8 @@ import com.hellogroup.teamenu.infrastructure.remote.xiachufang.XiachufangRecipeC
 import com.hellogroup.teamenu.infrastructure.remote.xiachufang.XiachufangRemoteService;
 import com.hellogroup.teamenu.infrastructure.remote.xiaohongshu.XiaohongshuMcpClient;
 import com.hellogroup.teamenu.infrastructure.remote.xiaohongshu.XiaohongshuRecipeParser;
+import com.hellogroup.teamenu.infrastructure.remote.xiaohongshu.XiaohongshuRemoteService;
+import com.hellogroup.teamenu.infrastructure.remote.zhipu.LlmRecipeExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,9 @@ public class RecipeApiService {
 
     @Resource
     private XiaohongshuRecipeParser xiaohongshuRecipeParser;
+    
+    @Resource
+    private XiaohongshuRemoteService xiaohongshuRemoteService;
 
     @Resource
     private XiachufangRemoteService xiachufangRemoteService;
@@ -53,6 +58,15 @@ public class RecipeApiService {
 
     @Resource
     private FileStorageService fileStorageService;
+
+    @Resource
+    private com.hellogroup.teamenu.infrastructure.remote.ali.VideoRecipeExtractor videoRecipeExtractor;
+
+    @Resource
+    private com.hellogroup.teamenu.infrastructure.remote.ali.ImageRecipeExtractor imageRecipeExtractor;
+
+    @Resource
+    private com.hellogroup.teamenu.infrastructure.remote.zhipu.LlmRecipeExtractor llmRecipeExtractor;
 
     
     /**
@@ -206,8 +220,10 @@ public class RecipeApiService {
 
     /**
      * 从小红书导入食谱
+     * 优先使用新的 HTTP API (xiaohongshu-api)，失败后 fallback 到 MCP
+     * 根据笔记类型(视频/图文/纯文字)智能选择对应的 AI 提取器
      */
-    private RecipeDTO importFromXiaohongshu(String text) {
+    public RecipeDTO importFromXiaohongshu(String text) {
         String resolvedUrl = resolveXiaohongshuUrl(text);
         if (resolvedUrl == null) {
             throw new BusinessException(ResponseCode.PARAM_ERROR, "无效的小红书链接");
@@ -221,16 +237,110 @@ public class RecipeApiService {
         String xsecToken = extractXsecToken(resolvedUrl);
         log.info("提取小红书参数, feedId={}, xsecToken={}", feedId, xsecToken);
 
-        JsonNode feedDetail = xiaohongshuMcpClient.getFeedDetail(feedId, xsecToken);
+        // 步骤1: 获取笔记数据 (优先 API,失败则 MCP)
+        JsonNode feedDetail = null;
+        try {
+            feedDetail = xiaohongshuRemoteService.getFeedDetail(feedId, xsecToken);
+            log.info("使用 xiaohongshu-api 服务获取笔记详情成功");
+        } catch (Exception e) {
+            log.warn("xiaohongshu-api 服务调用失败，尝试 fallback 到 MCP: {}", e.getMessage());
+            try {
+                feedDetail = xiaohongshuMcpClient.getFeedDetail(feedId, xsecToken);
+                log.info("使用 MCP 方式获取笔记详情成功");
+            } catch (Exception mcpError) {
+                log.error("MCP 方式也失败", mcpError);
+                throw new BusinessException(ResponseCode.EXTERNAL_SERVICE_ERROR, 
+                    "获取小红书笔记失败，API 和 MCP 方式均不可用");
+            }
+        }
 
-        Recipe recipe = xiaohongshuRecipeParser.parse(feedDetail);
+        // 步骤2: 根据笔记类型选择 AI Extractor
+        LlmRecipeExtractor.ExtractResult extractResult = null;
+        
+        JsonNode videoNode = feedDetail.path("video");
+        JsonNode imagesNode = feedDetail.path("images");
+        JsonNode textNode = feedDetail.path("text");
+        
+        String noteType = ""; // 用于日志
+        
+        // 判断优先级: video > images > text
+        if (videoNode != null && !videoNode.isNull() && videoNode.has("url")) {
+            // 视频笔记 - 使用阿里云视频理解
+            String videoUrl = videoNode.path("url").asText("");
+            if (!videoUrl.isEmpty()) {
+                noteType = "视频笔记";
+                log.info("检测到视频笔记, 使用 VideoRecipeExtractor, videoUrl={}", videoUrl);
+                try {
+                    extractResult = videoRecipeExtractor.extract(videoUrl);
+                    if (extractResult != null) {
+                        log.info("视频笔记提取成功: {}种食材, {}个步骤", 
+                                extractResult.getIngredients().size(), 
+                                extractResult.getSteps().size());
+                    }
+                } catch (Exception e) {
+                    log.error("视频提取失败, 将尝试降级方案", e);
+                }
+            }
+        } else if (imagesNode != null && imagesNode.isArray() && imagesNode.size() > 0) {
+            // 图文笔记 - 使用阿里云图像理解
+            List<String> imageUrls = extractImageUrls(imagesNode);
+            if (!imageUrls.isEmpty()) {
+                noteType = "图文笔记";
+                log.info("检测到图文笔记, 使用 ImageRecipeExtractor, 图片数量={}", imageUrls.size());
+                try {
+                    extractResult = imageRecipeExtractor.extract(imageUrls);
+                    if (extractResult != null) {
+                        log.info("图文笔记提取成功: {}种食材, {}个步骤", 
+                                extractResult.getIngredients().size(), 
+                                extractResult.getSteps().size());
+                    }
+                } catch (Exception e) {
+                    log.error("图文提取失败, 将尝试降级方案", e);
+                }
+            }
+        } else {
+            // 纯文字笔记 - 使用智谱 AI 文本理解
+            String textContent = textNode.path("desc").asText("");
+            if (!textContent.isEmpty()) {
+                noteType = "纯文字笔记";
+                log.info("检测到纯文字笔记, 使用 LlmRecipeExtractor");
+                try {
+                    extractResult = llmRecipeExtractor.extract(textContent);
+                    if (extractResult != null) {
+                        log.info("纯文字笔记提取成功: {}种食材, {}个步骤", 
+                                extractResult.getIngredients().size(), 
+                                extractResult.getSteps().size());
+                    }
+                } catch (Exception e) {
+                    log.error("文本提取失败, 将尝试降级方案", e);
+                }
+            }
+        }
 
+        // 步骤3: 构建 Recipe 对象
+        Recipe recipe;
+        if (extractResult != null && !extractResult.getIngredients().isEmpty()) {
+            // AI 提取成功,使用提取结果
+            log.info("使用 AI 提取结果构建食谱, 类型={}", noteType);
+            recipe = buildRecipeFromExtractResult(feedDetail, extractResult);
+        } else {
+            // AI 提取失败或为空,使用降级方案
+            log.warn("AI 提取失败或结果为空, 使用降级方案保存基本信息, 类型={}", noteType);
+            recipe = buildBasicRecipe(feedDetail);
+            
+            log.error("⚠️ 小红书笔记 AI 提取失败需要人工关注! feedId={}, noteType={}", feedId, noteType);
+        }
+
+        // 步骤4: 保存食谱
         recipe.setCreateTime(LocalDateTime.now());
         recipe.setUpdateTime(LocalDateTime.now());
         recipe.setLastAccessTime(LocalDateTime.now());
         recipe.setDeleted(false);
 
         Recipe savedRecipe = recipeRepository.save(recipe);
+        log.info("小红书食谱导入成功, recipeId={}, feedId={}, noteType={}", 
+                savedRecipe.getId(), feedId, noteType);
+        
         return toRecipeDTO(savedRecipe);
     }
 
@@ -412,6 +522,93 @@ public class RecipeApiService {
                 .stepNumber(dto.getStepNumber())
                 .description(dto.getDescription())
                 .imagePath(dto.getImagePath())
+                .build();
+    }
+
+    /**
+     * 从 JsonNode 中提取图片 URL 列表
+     */
+    private List<String> extractImageUrls(JsonNode imagesNode) {
+        List<String> urls = new java.util.ArrayList<>();
+        if (imagesNode != null && imagesNode.isArray()) {
+            for (JsonNode imgNode : imagesNode) {
+                String url = imgNode.path("url").asText("");
+                if (!url.isEmpty()) {
+                    urls.add(url);
+                }
+            }
+        }
+        return urls;
+    }
+
+    /**
+     * 从 AI 提取结果和笔记详情构建 Recipe 对象
+     */
+    private Recipe buildRecipeFromExtractResult(JsonNode feedDetail, 
+                                                com.hellogroup.teamenu.infrastructure.remote.zhipu.LlmRecipeExtractor.ExtractResult extractResult) {
+        JsonNode textNode = feedDetail.path("text");
+        JsonNode userNode = feedDetail.path("user");
+        
+        String title = textNode.path("title").asText("未命名食谱");
+        String desc = textNode.path("desc").asText("");
+        String author = userNode.path("nickname").asText("小红书用户");
+        
+        // 提取图片URLs
+        List<String> imagePaths = extractImageUrls(feedDetail.path("images"));
+        
+        // 如果有视频,也添加视频封面
+        JsonNode videoNode = feedDetail.path("video");
+        if (videoNode != null && !videoNode.isNull()) {
+            String videoUrl = videoNode.path("url").asText("");
+            if (!videoUrl.isEmpty() && !imagePaths.contains(videoUrl)) {
+                // 视频URL记录到source中
+                log.info("笔记包含视频: {}", videoUrl);
+            }
+        }
+        
+        return Recipe.builder()
+                .name(title)
+                .category(RecipeCategory.fromCode(extractResult.getCategoryCode()))
+                .completionTime(extractResult.getCompletionTime())
+                .source("小红书-" + author)
+                .needsPreparation(false)
+                .imagePaths(imagePaths)
+                .ingredients(extractResult.getIngredients())
+                .steps(extractResult.getSteps())
+                .build();
+    }
+
+    /**
+     * 构建基础食谱信息(AI提取失败时的降级方案)
+     */
+    private Recipe buildBasicRecipe(JsonNode feedDetail) {
+        JsonNode textNode = feedDetail.path("text");
+        JsonNode userNode = feedDetail.path("user");
+        
+        String title = textNode.path("title").asText("未命名食谱");
+        String desc = textNode.path("desc").asText("");
+        String author = userNode.path("nickname").asText("小红书用户");
+        
+        List<String> imagePaths = extractImageUrls(feedDetail.path("images"));
+        
+        // 创建一个简单的步骤,包含笔记描述
+        List<RecipeStep> steps = new java.util.ArrayList<>();
+        if (!desc.isEmpty()) {
+            steps.add(RecipeStep.builder()
+                    .stepNumber(1)
+                    .description(desc)
+                    .build());
+        }
+        
+        return Recipe.builder()
+                .name(title)
+                .category(RecipeCategory.STAPLE) // 默认分类
+                .completionTime(30) // 默认30分钟
+                .source("小红书-" + author)
+                .needsPreparation(false)
+                .imagePaths(imagePaths)
+                .ingredients(new java.util.ArrayList<>()) // 空食材列表
+                .steps(steps)
                 .build();
     }
 }

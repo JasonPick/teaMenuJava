@@ -16,10 +16,10 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class VideoRecipeExtractor {
+public class ImageRecipeExtractor {
 
     private static final String SYSTEM_PROMPT = """
-            你是一个专业的食谱信息提取助手。用户会提供一段食谱相关的视频链接，请从中提取食材清单和制作步骤。
+            你是一个专业的食谱信息提取助手。用户会提供一系列和食谱相关的图片链接，请从中提取食材清单和制作步骤。
 
             请严格按照以下 JSON 格式返回，不要包含任何其他文字：
             {
@@ -48,22 +48,29 @@ public class VideoRecipeExtractor {
     private ObjectMapper objectMapper;
 
     /**
-     * 一次性从文本中提取食材、步骤、分类和预估时间
+     * 从图片列表中提取食材、步骤、分类和预估时间
      */
-    public LlmRecipeExtractor.ExtractResult extract(String videoUrl) {
+    public LlmRecipeExtractor.ExtractResult extract(List<String> imageUrls) {
         if (!aliAiService.isAvailable()) {
             log.warn("ALI AI不可用，无法使用 LLM 提取食谱信息");
             return null;
         }
 
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            log.warn("图片URL列表为空，无法提取食谱信息");
+            return null;
+        }
+
         try {
-            String response = aliAiService.videoUnderstanding(SYSTEM_PROMPT, videoUrl);
+            log.info("开始从{}张图片中提取食谱信息", imageUrls.size());
+            String response = aliAiService.imageUnderstanding(SYSTEM_PROMPT, imageUrls);
             if (response == null || response.isBlank()) {
+                log.warn("图片理解返回空结果");
                 return null;
             }
             return parseResponse(response);
         } catch (Exception e) {
-            log.error("LLM 提取食谱信息失败", e);
+            log.error("图片理解提取食谱信息失败", e);
             return null;
         }
     }
@@ -73,12 +80,12 @@ public class VideoRecipeExtractor {
             // 清理 Markdown 代码块标记（```json 和 ```）
             String cleanedResponse = response.trim();
             if (cleanedResponse.startsWith("```json")) {
-                cleanedResponse = cleanedResponse.substring(7);
+                cleanedResponse = cleanedResponse.substring(7); // 移除 ```json
             } else if (cleanedResponse.startsWith("```")) {
-                cleanedResponse = cleanedResponse.substring(3);
+                cleanedResponse = cleanedResponse.substring(3); // 移除 ```
             }
             if (cleanedResponse.endsWith("```")) {
-                cleanedResponse = cleanedResponse.substring(0, cleanedResponse.length() - 3);
+                cleanedResponse = cleanedResponse.substring(0, cleanedResponse.length() - 3); // 移除末尾 ```
             }
             cleanedResponse = cleanedResponse.trim();
             

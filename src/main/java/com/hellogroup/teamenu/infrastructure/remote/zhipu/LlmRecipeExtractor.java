@@ -89,7 +89,21 @@ public class LlmRecipeExtractor {
 
     private ExtractResult parseResponse(String response) {
         try {
-            JsonNode root = objectMapper.readTree(response);
+            // 清理 Markdown 代码块标记（```json 和 ```）
+            String cleanedResponse = response.trim();
+            if (cleanedResponse.startsWith("```json")) {
+                cleanedResponse = cleanedResponse.substring(7);
+            } else if (cleanedResponse.startsWith("```")) {
+                cleanedResponse = cleanedResponse.substring(3);
+            }
+            if (cleanedResponse.endsWith("```")) {
+                cleanedResponse = cleanedResponse.substring(0, cleanedResponse.length() - 3);
+            }
+            cleanedResponse = cleanedResponse.trim();
+            
+            log.debug("清理后的响应: {}", cleanedResponse);
+            
+            JsonNode root = objectMapper.readTree(cleanedResponse);
 
             ExtractResult result = new ExtractResult();
 
