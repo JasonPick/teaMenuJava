@@ -14,7 +14,7 @@ public class AiModelConfig {
     @Value("${ali.ai.video.api.baseUrl:https://dashscope.aliyuncs.com/compatible-mode/v1}")
     public String aliAiVideoApiBaseUrl;
 
-    @Value("${ali.ai.video.model:qwen3.5-plus}")
+    @Value("${ali.ai.video.model:qwen3-vl-235b-a22b-thinking}")
     public String aliAiVideoModel;
 
     @Bean
